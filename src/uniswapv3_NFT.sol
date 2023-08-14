@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "src/tokens/ERC721.sol";
+import"lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 
 contract  UniswapV3_NFT is ERC721 {
     address public immutable factory;//once contract deployed it cannot be changed 
@@ -10,7 +10,7 @@ contract  UniswapV3_NFT is ERC721 {
         factory = factoryAddress;
       }
 
-    function tokenURL(uint256 tokenId) pubic view returns(string memory){
+    function tokenURL(uint256 tokenId) public view returns(string memory){
         return "";
     }
 
@@ -23,34 +23,36 @@ contract  UniswapV3_NFT is ERC721 {
         
     mapping (uint256 => TokenPosition) public positions;
 
-    function mintToken(//new tokens to mint
-        address pool,
-        uint256 tokenId,
-        int24 upperTick,
-        int24 lowerTick
-    ) external{
-        require(msg.sender == factory,"tokens can be mint only by factories");
-        _mint(msg.sender,tokenId);
-        position(tokenId) = TokenPosition({
-            pool: pool,
-            lowerTick: lowerTick,
-            upperTick: upperTick
-         });
-    }    
+    function mintToken(// new tokens to mint
+    address pool,
+    uint256 tokenId,
+    int24 upperTick,
+    int24 lowerTick
+) external {
+    require(msg.sender == factory, "tokens can be mint only by factories");
+    _mint(msg.sender, tokenId);
+    positions[tokenId] = TokenPosition({
+        pool: pool,
+        lowerTick: lowerTick,
+        upperTick: upperTick
+    });
+}
+
 
     function updateTokenPosition(// function allows the owner of an NFT (the creator) to update the position associated with the NFT.
-        address newPool,
-        uint256 tokenId,
-        int24 newLowerTick,
-        int24 newUpperTick
-    ) external{
-        require(ownerOf(tokenId) == msg.sender,"this token is not owned by you");
-        position[tokenId]=TokenPosition({
-            pool: newPool,
-            lowerTick: newLowerTick,
-            upperTick: newUpperTick
+    address newPool,
+    uint256 tokenId,
+    int24 newLowerTick,
+    int24 newUpperTick
+) external {
+    require(ownerOf(tokenId) == msg.sender, "this token is not owned by you");
+    positions[tokenId] = TokenPosition({
+        pool: newPool,
+        lowerTick: newLowerTick,
+        upperTick: newUpperTick
     });
-    }
+}
+
 
     function getPosition(uint256 tokenId)external view returns(
         address pool,
