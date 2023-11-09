@@ -1,12 +1,14 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
-import {Script, console2} from "forge-std/Script.sol";
+import {Script} from "forge-std/Script.sol";
 
-contract CounterScript is Script {
-    function setUp() public {}
+import {LPTracker} from "src/LPTracker.sol";
 
-    function run() public {
-        vm.broadcast();
+contract Deploy is Script {
+    function run() external returns (LPTracker lptracker) {
+        vm.startBroadcast();
+        lptracker = new LPTracker(0xC36442b4a4522E871399CD717aBDD847Ab11FE88);
+        vm.stopBroadcast();
     }
 }
